@@ -26,13 +26,13 @@ data aws_iam_policy_document "ec2_assume_role" {
 
 data aws_iam_policy_document "s3_write_access" {
   statement {
-    actions = ["s3:PutObject"] 
+    actions   = ["s3:PutObject"] 
     resources = ["arn:aws:s3:::allianceCU_challenge_s3"]
   }
 }
 
 resource "aws_iam_role" "ec2_iam_role" {
-  name = "ec2_iam_role"
+  name               = "ec2_iam_role"
   assume_policy_role = "${data.aws_iam_policy_document.ec2_assume_role.json}"
 }
 
