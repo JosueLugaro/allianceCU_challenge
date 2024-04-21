@@ -27,7 +27,7 @@ data aws_iam_policy_document "ec2_assume_role" {
 data aws_iam_policy_document "s3_write_access" {
   statement {
     actions   = ["s3:PutObject"] 
-    resources = ["arn:aws:s3:::allianceCU_challenge_s3"]
+    resources = ["arn:aws:s3:::candidate-bucket-01"]
   }
 }
 
@@ -55,6 +55,14 @@ resource "aws_instance" "app_server" {
 
   tags = {
     Name = "AllianceCUServerInstance"
+  }
+}
+
+resource "aws_s3_bucket" "candidate-bucket-01" {
+  bucket = "candidate-bucket-01"
+
+  tags = {
+    Name = "allianceCU_challenge_s3"
   }
 }
 
