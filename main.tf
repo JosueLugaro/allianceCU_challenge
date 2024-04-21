@@ -13,6 +13,15 @@ provider "aws" {
   region  = "us-east-1"
 }
 
+resource "tls_private_key" "key" {
+  algorithm = "RSA"
+}
+
+resource "aws_key_pair" "aws_key" {
+  key_name = "ansible-ssh-key"
+  public_key = tls_private_key.key.public_key_openssh
+}
+
 data aws_iam_policy_document "ec2_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -52,6 +61,7 @@ resource "aws_instance" "app_server" {
   ami           = "ami-0e001c9271cf7f3b9"
   instance_type = "t3.micro"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile}"
+  key_name = aws_key_pair.aws_key.key_name
 
   tags = {
     Name = "AllianceCUServerInstance"
