@@ -46,7 +46,7 @@ resource "aws_iam_role" "ec2_iam_role" {
 }
 
 resource "aws_iam_role_policy" "join_policy" {
-  depends_on = ["aws_iam_role.ec2_iam_role"]
+  depends_on = [aws_iam_role.ec2_iam_role]
   name       = "join_policy"
   role       = "${aws_iam_role.ec2_iam_role.name}"
   policy     = "${data.aws_iam_policy_document.s3_write_access.json}"
