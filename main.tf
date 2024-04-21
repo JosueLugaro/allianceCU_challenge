@@ -22,7 +22,7 @@ resource "aws_key_pair" "aws_key" {
   public_key = tls_private_key.key.public_key_openssh
 }
 
-data aws_iam_policy_document "ec2_assume_role" {
+data "aws_iam_policy_document" "ec2_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -33,7 +33,7 @@ data aws_iam_policy_document "ec2_assume_role" {
   }
 }
 
-data aws_iam_policy_document "s3_write_access" {
+data "aws_iam_policy_document" "s3_write_access" {
   statement {
     actions   = ["s3:PutObject"] 
     resources = ["arn:aws:s3:::candidate-bucket-01"]
@@ -42,7 +42,7 @@ data aws_iam_policy_document "s3_write_access" {
 
 resource "aws_iam_role" "ec2_iam_role" {
   name               = "ec2_iam_role"
-  assume_policy_role = "${data.aws_iam_policy_document.ec2_assume_role.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.ec2_assume_role.json}"
 }
 
 resource "aws_iam_role_policy" "join_policy" {
@@ -54,13 +54,13 @@ resource "aws_iam_role_policy" "join_policy" {
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "instance_profile"
-  role = "${aws_iam_role_policy.join_policy.name}"
+  role = "${aws_iam_role.ec2_iam_role.name}"
 }
 
 resource "aws_instance" "app_server" {
   ami           = "ami-0e001c9271cf7f3b9"
   instance_type = "t3.micro"
-  iam_instance_profile = "${aws_iam_instance_profile.instance_profile}"
+  iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
   key_name = aws_key_pair.aws_key.key_name
 
   tags = {

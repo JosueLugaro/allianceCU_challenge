@@ -1,2 +1,9 @@
 # Ignore local terraform directory
 **/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Ignore sensitive files
+*.pem
