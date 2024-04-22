@@ -1,8 +1,6 @@
 resource "aws_security_group" "ssh" {
   name   = "ssh"
-  # In a real environment this wouldn't be
-  # hard-coded but it is here for simplicity
-  vpc_id = "vpc-0096bb341b29221b0"
+  vpc_id = aws_vpc.main.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh_ingress" {
