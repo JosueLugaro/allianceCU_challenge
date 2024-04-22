@@ -69,8 +69,11 @@ data "aws_iam_policy_document" "ec2_assume_role" {
 
 data "aws_iam_policy_document" "s3_write_access" {
   statement {
-    actions   = ["s3:PutObject"] 
-    resources = ["arn:aws:s3:::candidate-bucket-01"]
+    actions   = ["s3:PutObject", "s3:PutObjectAcl"]
+    resources = [
+      "arn:aws:s3:::candidate-bucket-01",
+      "arn:aws:s3:::candidate-bucket-01/*"
+    ]
   }
 }
 
@@ -107,9 +110,31 @@ resource "aws_instance" "app_server" {
 
 resource "aws_s3_bucket" "candidate-bucket-01" {
   bucket = "candidate-bucket-01"
+  force_destroy = true
 
   tags = {
     Name = "allianceCU_challenge_s3"
   }
 }
 
+data "aws_iam_policy_document" "allow_access_from_ec2" {
+  statement {
+    principals {
+      type = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl"
+    ]
+    resources = [
+      aws_s3_bucket.candidate-bucket-01.arn,
+      "${aws_s3_bucket.candidate-bucket-01.arn}/*"
+    ]
+  }
+}
+
+resource "aws_s3_bucket_policy" "allow_access_from_ec2" {
+  bucket = aws_s3_bucket.candidate-bucket-01.id
+  policy = data.aws_iam_policy_document.allow_access_from_ec2.json
+}
