@@ -1,0 +1,15 @@
+- name: Copy file and create cronjob
+  hosts: aws_ec2
+
+  tasks:
+  - name: Copy python script to ec2
+    ansible.builtin.copy:
+      src: ~/allianceCU_challenge/uname-output.py
+      dest: ~/
+
+  - name: Create cronjob
+    ansible.builtin.cron:
+      name: "Run python script and upload log to s3"
+      minute: "0"
+      job: "python3 log_timestamp_and_uname.py && aws s3 cp uname-output.log s3://candidate-bucket-01"
+
