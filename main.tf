@@ -92,7 +92,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-0e001c9271cf7f3b9"
+  ami           = "ami-04e5276ebb8451442"
   instance_type = "t3.micro"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
   key_name = aws_key_pair.aws_key.key_name
