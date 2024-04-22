@@ -96,6 +96,9 @@ resource "aws_instance" "app_server" {
   instance_type = "t3.micro"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
   key_name = aws_key_pair.aws_key.key_name
+  associate_public_ip_address = true
+  subnet_id = aws_subnet.main.id
+  vpc_security_group_ids = [aws_security_group.ssh.id]
 
   tags = {
     Name = "AllianceCUServerInstance"
