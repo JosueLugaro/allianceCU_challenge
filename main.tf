@@ -69,10 +69,10 @@ data "aws_iam_policy_document" "ec2_assume_role" {
 
 data "aws_iam_policy_document" "s3_write_access" {
   statement {
-    actions   = ["s3:PutObject", "s3:PutObjectAcl"]
+    actions   = ["s3:PutObject"]
     resources = [
-      "arn:aws:s3:::candidate-bucket-01",
-      "arn:aws:s3:::candidate-bucket-01/*"
+      aws_s3_bucket.candidate-bucket-01.arn,
+      "${aws_s3_bucket.candidate-bucket-01.arn}/*"
     ]
   }
 }
@@ -123,10 +123,7 @@ data "aws_iam_policy_document" "allow_access_from_ec2" {
       type = "Service"
       identifiers = ["ec2.amazonaws.com"]
     }
-    actions = [
-      "s3:PutObject",
-      "s3:PutObjectAcl"
-    ]
+    actions = ["s3:PutObject"]
     resources = [
       aws_s3_bucket.candidate-bucket-01.arn,
       "${aws_s3_bucket.candidate-bucket-01.arn}/*"
