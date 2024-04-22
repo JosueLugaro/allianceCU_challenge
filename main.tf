@@ -31,7 +31,7 @@ resource "aws_internet_gateway" "gateway" {
 resource "aws_subnet" "main" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = aws_vpc.main.cidr_block
-  availability_zone = "${data.aws_region.current.name}"
+  availability_zone = "${data.aws_region.current.name}a"
 }
 
 resource "aws_route_table" "route_table" {
