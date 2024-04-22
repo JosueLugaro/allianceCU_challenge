@@ -1,9 +1,12 @@
-# Ignore local terraform directory
+# Local terraform directory
 **/.terraform/*
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
 
-# Ignore sensitive files
+# Sensitive files
 *.pem
+
+# Dynamically generated Ansible files
+inventory.ini
