@@ -7,6 +7,12 @@
       src: ~/allianceCU_challenge/uname-output.py
       dest: ~/
 
+  - name: Install cronie for cronjob functionality
+    ansible.builtin.package:
+      name: cronie
+      state: present
+      use: yum
+
   - name: Create cronjob
     ansible.builtin.cron:
       name: "Run python script and upload log to s3"

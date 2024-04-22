@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.46"
     }
+
+    ansible = {
+      source = "ansible/ansible"
+      version = "~> 1.2.0"
+    }
   }
 
   required_version = ">= 1.2.0"
@@ -134,4 +139,10 @@ data "aws_iam_policy_document" "allow_access_from_ec2" {
 resource "aws_s3_bucket_policy" "allow_access_from_ec2" {
   bucket = aws_s3_bucket.candidate-bucket-01.id
   policy = data.aws_iam_policy_document.allow_access_from_ec2.json
+}
+
+resource "ansible_playbook" "playbook" {
+  playbook = "ansible/playbook.yaml"
+  name = aws_instance.app_server.public_dns
+  replayable = true
 }
