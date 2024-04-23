@@ -4,18 +4,25 @@
   tasks:
   - name: Copy python script to ec2
     ansible.builtin.copy:
-      src: ~/allianceCU_challenge/uname-output.py
+      src: ~/allianceCU_challenge/log_timestamp_and_uname.py
       dest: ~/
 
   - name: Install cronie for cronjob functionality
     ansible.builtin.package:
       name: cronie
       state: present
-      use: yum
+    become: true
+
+  - name: Enable the cronie service
+    ansible.builtin.command: systemctl enable crond.service
+    become: true
+
+  - name: Start cronie service
+    ansible.builtin.command: systemctl start crond.service
+    become: true
 
   - name: Create cronjob
     ansible.builtin.cron:
       name: "Run python script and upload log to s3"
-      minute: "0"
       job: "python3 log_timestamp_and_uname.py && aws s3 cp uname-output.log s3://candidate-bucket-01"
 
