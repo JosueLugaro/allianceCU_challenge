@@ -148,7 +148,7 @@ resource "local_sensitive_file" "private_key" {
 }
 
 resource "ansible_playbook" "playbook" {
-  playbook = "ansible/playbook.yaml"
+  playbook = "ansible/playbook.yml"
   name = aws_instance.app_server.public_dns
   replayable = true
   extra_vars = {
