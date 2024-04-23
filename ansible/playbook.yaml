@@ -1,7 +1,15 @@
 - name: Copy file and create cronjob
-  hosts: aws_ec2
+  hosts: default
+  gather_facts: no # Waiting till ec2 is reachable to gather facts
 
   tasks:
+  - name: Wait for ec2 to become reachable
+    ansible.builtin.wait_for_connection:
+      timeout: 90
+
+  - name: Gather facts about ec2
+    ansible.builtin.setup:
+
   - name: Copy python script to ec2
     ansible.builtin.copy:
       src: ~/allianceCU_challenge/log_timestamp_and_uname.py

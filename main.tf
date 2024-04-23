@@ -141,8 +141,18 @@ resource "aws_s3_bucket_policy" "allow_access_from_ec2" {
   policy = data.aws_iam_policy_document.allow_access_from_ec2.json
 }
 
+resource "local_sensitive_file" "private_key" {
+  content = tls_private_key.key.private_key_pem
+  filename = format("%s/%s/%s", abspath(path.root), ".ssh", "ansible-ssh-key.pem")
+  file_permission = "0600"
+}
+
 resource "ansible_playbook" "playbook" {
   playbook = "ansible/playbook.yaml"
   name = aws_instance.app_server.public_dns
   replayable = true
+  extra_vars = {
+    ansible_ssh_user="ec2-user",
+    ansible_ssh_private_key_file=local_sensitive_file.private_key.filename,
+  }
 }
