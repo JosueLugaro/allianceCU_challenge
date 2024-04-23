@@ -9,6 +9,11 @@ terraform {
       source = "ansible/ansible"
       version = "~> 1.2.0"
     }
+
+    null = {
+      source = "hashicorp/null"
+      version = "~> 3.2.2"
+    }
   }
 
   required_version = ">= 1.2.0"
@@ -147,12 +152,27 @@ resource "local_sensitive_file" "private_key" {
   file_permission = "0600"
 }
 
+resource "null_resource" "wait_till_ec2_is_reachable" {
+  provisioner "remote-exec" {
+    connection {
+      type = "ssh"
+      host = aws_instance.app_server.public_dns
+      user = "ec2-user"
+      private_key = local_sensitive_file.private_key.content
+    }
+
+    inline = ["echo 'ec2 is reachable!'"]
+  }
+}
+
 resource "ansible_playbook" "playbook" {
+  # Dependency forces ansible to wait for ec2 connection to be available
+  depends_on = [null_resource.wait_till_ec2_is_reachable]
   playbook = "ansible/playbook.yaml"
   name = aws_instance.app_server.public_dns
   replayable = true
   extra_vars = {
     ansible_ssh_user="ec2-user",
-    ansible_ssh_private_key_file=local_sensitive_file.private_key.filename,
+    ansible_ssh_private_key_file=local_sensitive_file.private_key.filename
   }
 }
