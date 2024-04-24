@@ -99,7 +99,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
   role = "${aws_iam_role.ec2_iam_role.name}"
 }
 
-resource "aws_instance" "app_server" {
+resource "aws_instance" "ec2_instance" {
   ami           = "ami-04e5276ebb8451442"
   instance_type = "t3.micro"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
@@ -149,7 +149,7 @@ resource "local_sensitive_file" "private_key" {
 
 resource "ansible_playbook" "playbook" {
   playbook = "ansible/playbook.yml"
-  name = aws_instance.app_server.public_dns
+  name = aws_instance.ec2_instance.public_dns
   replayable = true
   extra_vars = {
     ansible_ssh_user="ec2-user",
